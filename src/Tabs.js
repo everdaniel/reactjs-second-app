@@ -5,7 +5,7 @@ function TabItem(props) {
 
   return (
     <li className="nav-item">
-        <a className="nav-link" href="#">{tabData.label}</a>
+        <button className="nav-link">{tabData.label}</button>
     </li>
     )
 }

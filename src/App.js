@@ -40,7 +40,7 @@ function TodoAddForm(props) {
 }
 
 function TodoList(props) {
-    const {todos, onDeleteItem} = props
+    const {todos, onDeleteItem, onToggleDone} = props
 
     if (todos.length === 0) {
         return <EmptyTodoList />
@@ -48,7 +48,7 @@ function TodoList(props) {
 
     return (
         <ul className="list-group">
-            { todos.map((item) => <TodoItem key={item.id} todo={item} onDelete={onDeleteItem} />)}
+            { todos.map((item) => <TodoItem key={item.id} todo={item} onDelete={onDeleteItem} onToggleDone={onToggleDone} />)}
         </ul>
     )
 }
@@ -60,26 +60,20 @@ function EmptyTodoList() {
 }
 
 function TodoItem(props) {
-    const {todo, onDelete} = props;
-
-    const updateTodoHandler = (event) => {
-        // event.preventDefault()
-        if (event.target.checked) {
-            todo.status = 'completed'
-        }
-        else {
-            todo.status = 'pending'
-        }
-    }
+    const {todo, onDelete, onToggleDone} = props;
 
     const deleteHandler = () => {
         onDelete(todo.id)
     }
 
+    const onToggleHandler = () => {
+      onToggleDone(todo.id)
+    }
+
     return (
-        <li className="list-group-item">
-            <div className="form-check">
-                <input className="form-check-input" type="checkbox" onChange={updateTodoHandler} />
+        <li className={todo.isDone ? 'list-group-item list-group-item-secondary' : 'list-group-item'}>
+            <div className="form-check" style={{ textDecoration: todo.isDone ? 'line-through' : 'none' }}>
+                <input className="form-check-input" type="checkbox" onChange={onToggleHandler} />
                 <label className="form-check-label">
                     {todo.task}
                 </label>
@@ -102,7 +96,7 @@ function App() {
         const newTodo = {
             id: Math.random() * 10000,
             task: todo,
-            status: 'pending'
+            isDone: false
         }
         setTodos([...todos, newTodo])
     };
@@ -114,11 +108,23 @@ function App() {
         setTodos(updatedTodos)
     }
 
+    const onToggleDoneHandler = (id) => {
+      const newTodos = todos.map(todo => {
+        if (todo.id !== id) {
+          return todo;
+        }
+        todo.isDone = !todo.isDone;
+        return todo
+      });
+
+      setTodos(newTodos);
+    }
+
     return (
         <div className="container mt-2">
             <TodoAddForm
                 onNewInput={createTodoItem} />
-            <TodoList todos={todos} onDeleteItem={deleteTodoItem} />
+            <TodoList todos={todos} onDeleteItem={deleteTodoItem} onToggleDone={onToggleDoneHandler} />
             <pre>{JSON.stringify(todos, null, 2)}</pre>
         </div>
     );
