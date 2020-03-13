@@ -1,5 +1,6 @@
 import React, {useState, useEffect}  from 'react';
 import {getAllTodos, createTodo, toggleIsDone, deleteTodo}  from '../utils/todos';
+import { logout } from '../utils/auth'
 
 function TodoAddForm(props) {
     const {onNewInput} = props
@@ -134,6 +135,10 @@ function TodoPage() {
         })
     }
 
+    const logoutHandler = (event) => {
+        logout()
+    }
+
     if (loading) {
         return <div className="container mt-2"><p><i className="fa fa-spin fa-spinner fa-fw"></i>Loading..</p></div>
     }
@@ -143,6 +148,7 @@ function TodoPage() {
             <TodoAddForm
                 onNewInput={createTodoItem} />
             <TodoList todos={todos} onDeleteItem={deleteTodoItem} onToggleDone={onToggleDoneHandler} />
+            <button onClick={logoutHandler} className="btn btn-primary">Logout</button>
             <pre>{JSON.stringify(todos, null, 2)}</pre>
         </div>
     );
